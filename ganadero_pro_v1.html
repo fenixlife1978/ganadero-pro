@@ -556,10 +556,10 @@ body.sidebar-mobile .sidebar-overlay{display:block}
             <div class="form-group"><label>Versión</label><input type="text" value="3.0.0" readonly></div>
             <div class="form-group"><label>Idioma</label><select><option>Español</option><option>English</option></select></div>
             <div class="form-group"><label>Zona Horaria</label><select><option>América/Caracas (UTC-4)</option><option>América/Bogotá (UTC-5)</option></select></div>
-            <div class="form-group"><label>Moneda</label><select><option>USD</option><option>Bs.</option><option>EUR</option><option>USDT</option></select></div>
+            <div class="form-group"><label>Moneda</label><select id="cfg-moneda"><option>USD</option><option>Bs.</option><option>EUR</option><option>USDT</option></select></div>
             <div class="form-group"><label>Formato de Fecha</label><select><option>DD/MM/YYYY</option><option>MM/DD/YYYY</option><option>YYYY-MM-DD</option></select></div>
           </div>
-          <button class="btn btn-primary" onclick="showToast('Configuración guardada')">💾 Guardar Cambios</button>
+          <button class="btn btn-primary" onclick="DB.config.moneda=document.getElementById('cfg-moneda').value;saveDB();showToast('Configuración guardada')">💾 Guardar Cambios</button>
         </div>
       </div>
       <div class="tab-content" id="cfg-usuarios">
@@ -655,7 +655,7 @@ const DB = {
   sanidad: [], potreros: [], alimentacion: [], maquinaria: [], medicamentos: [],
   inventario: [], compras: [], ventas: [], clientes: [], proveedores: [],
   finanzas: [], movimientos: [], auditoria: [], documentos: [], backups: [],
-  config: { finca: 'Finca La Esperanza', version: '3.0.0' },
+  config: { finca: 'Finca La Esperanza', version: '3.0.0', moneda: 'USD' },
   tags: {
     razas: ['Jersey','Holstein','Brahman','Gyr','Pardo Suizo','Angus','Hereford','Simmental'],
     categoriasMed: ['Antiparasitario','Vacuna','Antibiótico','Antiinflamatorio','Vitamina','Mineral'],
@@ -1331,7 +1331,7 @@ function saveCompra(editId){
   if(!data.proveedor){showToast('Proveedor obligatorio','error');return;}
   data.total=parseFloat(data.total);
   if(editId){const idx=DB.compras.findIndex(c=>c.id===editId);if(idx>=0){DB.compras[idx]={...DB.compras[idx],...data};}}
-  else{data.id='CO'+String(DB.compras.length+1).padStart(3,'0');DB.compras.push(data);audit('Compras','Crear',data.documento,'$'+data.total);}
+  else{data.id='CO'+String(DB.compras.length+1).padStart(3,'0');DB.compras.push(data);audit('Compras','Crear',data.documento,MONEY()+data.total);}
   saveDB();closeModal();renderCompras();showToast('Compra registrada');
 }
 function saveVenta(editId){
@@ -1339,7 +1339,7 @@ function saveVenta(editId){
   if(!data.cliente){showToast('Cliente obligatorio','error');return;}
   data.total=parseFloat(data.total);
   if(editId){const idx=DB.ventas.findIndex(v=>v.id===editId);if(idx>=0){DB.ventas[idx]={...DB.ventas[idx],...data};}}
-  else{data.id='V'+String(DB.ventas.length+1).padStart(3,'0');DB.ventas.push(data);audit('Ventas','Crear',data.animal,'$'+data.total);}
+  else{data.id='V'+String(DB.ventas.length+1).padStart(3,'0');DB.ventas.push(data);audit('Ventas','Crear',data.animal,MONEY()+data.total);}
   saveDB();closeModal();renderVentas();showToast('Venta registrada');
 }
 function saveCliente(editId){
@@ -1361,7 +1361,7 @@ function saveFinanza(editId){
   if(!data.concepto){showToast('Concepto obligatorio','error');return;}
   data.monto=parseFloat(data.monto);
   if(editId){const idx=DB.finanzas.findIndex(f=>f.id===editId);if(idx>=0){DB.finanzas[idx]={...DB.finanzas[idx],...data};}}
-  else{data.id='F'+String(DB.finanzas.length+1).padStart(3,'0');DB.finanzas.push(data);audit('Finanzas','Crear',data.concepto,data.tipo+': $'+data.monto);}
+  else{data.id='F'+String(DB.finanzas.length+1).padStart(3,'0');DB.finanzas.push(data);audit('Finanzas','Crear',data.concepto,data.tipo+': '+MONEY()+data.monto);}
   saveDB();closeModal();renderFinanzas();showToast('Movimiento financiero guardado');
 }
 function saveMovimiento(editId){
@@ -1512,12 +1512,12 @@ function verFicha(animalId){
     </div>
     <div class="tab-content" id="ficha-sanidad">
       <div class="card">
-        ${san.length?san.map(s=>`<div style="padding:12px;background:var(--bg);border-radius:8px;margin-bottom:10px;border-left:4px solid var(--red)"><div style="display:flex;justify-content:space-between"><strong>${s.tipo}</strong><span style="color:var(--text-light);font-size:12px">${s.fecha}</span></div><div style="font-size:12px;margin-top:4px">Diagnóstico: ${s.diagnostico}</div><div style="font-size:12px">Tratamiento: ${s.tratamiento} | ${s.medicamento} ${s.dosis?'('+s.dosis+')':''}</div><div style="font-size:11px;margin-top:4px">Dr. ${s.veterinario} | Costo: $${s.costo}</div></div>`).join(''):'<div class="empty">Sin registros sanitarios</div>'}
+        ${san.length?san.map(s=>`<div style="padding:12px;background:var(--bg);border-radius:8px;margin-bottom:10px;border-left:4px solid var(--red)"><div style="display:flex;justify-content:space-between"><strong>${s.tipo}</strong><span style="color:var(--text-light);font-size:12px">${s.fecha}</span></div><div style="font-size:12px;margin-top:4px">Diagnóstico: ${s.diagnostico}</div><div style="font-size:12px">Tratamiento: ${s.tratamiento} | ${s.medicamento} ${s.dosis?'('+s.dosis+')':''}</div><div style="font-size:11px;margin-top:4px">Dr. ${s.veterinario} | Costo: ${MONEY()}${s.costo}</div></div>`).join(''):'<div class="empty">Sin registros sanitarios</div>'}
       </div>
     </div>
     <div class="tab-content" id="ficha-alim">
       <div class="card">
-        ${ali.length?ali.map(al=>`<div style="padding:12px;background:var(--bg);border-radius:8px;margin-bottom:10px"><div style="display:flex;justify-content:space-between"><strong>${al.alimento}</strong><span style="color:var(--text-light);font-size:12px">${al.fecha}</span></div><div style="font-size:12px;margin-top:4px">${al.cantidad} ${al.unidad} | Dieta: ${al.dieta||'-'} ${al.suplementos?'| Sup: '+al.suplementos:''}</div><div style="font-size:11px;color:var(--text-light)">Costo: $${al.costo} | Resp: ${al.responsable||'-'}</div></div>`).join(''):'<div class="empty">Sin registros de alimentación</div>'}
+        ${ali.length?ali.map(al=>`<div style="padding:12px;background:var(--bg);border-radius:8px;margin-bottom:10px"><div style="display:flex;justify-content:space-between"><strong>${al.alimento}</strong><span style="color:var(--text-light);font-size:12px">${al.fecha}</span></div><div style="font-size:12px;margin-top:4px">${al.cantidad} ${al.unidad} | Dieta: ${al.dieta||'-'} ${al.suplementos?'| Sup: '+al.suplementos:''}</div><div style="font-size:11px;color:var(--text-light)">Costo: ${MONEY()}${al.costo} | Resp: ${al.responsable||'-'}</div></div>`).join(''):'<div class="empty">Sin registros de alimentación</div>'}
       </div>
     </div>
     <div class="tab-content" id="ficha-prod">
@@ -1547,7 +1547,7 @@ function verFicha(animalId){
         <div class="timeline">
           ${[...repro.map(r=>({fecha:r.fecha,tipo:r.tipo,desc:`${r.metodo} - ${r.resultado}${r.cria?' - Cría: '+r.cria:''}`,color:'green'})),
              ...pes.map(p=>({fecha:p.fecha,tipo:'Pesaje',desc:`${p.peso} kg - Ganancia: ${p.gananciaDiaria} kg/día`,color:'blue'})),
-             ...san.map(s=>({fecha:s.fecha,tipo:s.tipo,desc:`${s.diagnostico} - ${s.tratamiento} ($${s.costo})`,color:'red'})),
+             ...san.map(s=>({fecha:s.fecha,tipo:s.tipo,desc:`${s.diagnostico} - ${s.tratamiento} (${MONEY()}${s.costo})`,color:'red'})),
              ...prod.map(p=>({fecha:p.fecha,tipo:'Producción',desc:`${p.litros} L - Turno ${p.turno}`,color:'orange'})),
              ...mov.map(m=>({fecha:m.fecha,tipo:m.tipo,desc:`${m.origen} → ${m.destino}`,color:'purple'}))
           ].sort((a,b)=>a.fecha.localeCompare(b.fecha)).map(e=>`
@@ -1599,7 +1599,7 @@ function renderSanidad(){
   const filtered=DB.sanidad.filter(s=>!f||s.tipo===f);
   document.getElementById('tabla-sanidad').innerHTML=filtered.length?filtered.map(s=>{
     const a=DB.animales.find(x=>x.id===s.animalId);
-    return `<tr><td><strong>${s.id}</strong></td><td>${s.fecha}</td><td>${a?a.arete:s.animalId}</td><td>${s.tipo}</td><td>${s.diagnostico}</td><td>${s.tratamiento}</td><td>${s.veterinario}</td><td>$${s.costo}</td>
+    return `<tr><td><strong>${s.id}</strong></td><td>${s.fecha}</td><td>${a?a.arete:s.animalId}</td><td>${s.tipo}</td><td>${s.diagnostico}</td><td>${s.tratamiento}</td><td>${s.veterinario}</td><td>${MONEY()}${s.costo}</td>
     <td><button class="btn btn-secondary btn-icon" onclick="openModal('sanidad','${s.id}')">️</button><button class="btn btn-danger btn-icon" onclick="deleteItem('sanidad','${s.id}')">🗑️</button></td></tr>`;
   }).join(''):'<tr><td colspan="9" class="empty">Sin registros</td></tr>';
 }
@@ -1611,7 +1611,7 @@ function renderPotreros(){
 }
 function renderAlimentacion(){
   document.getElementById('tabla-alimentacion').innerHTML=DB.alimentacion.length?DB.alimentacion.map(a=>`
-    <tr><td><strong>${a.id}</strong></td><td>${a.fecha}</td><td>${a.animalId}</td><td>${a.alimento}</td><td>${a.cantidad} ${a.unidad}</td><td>${a.dieta||'-'}</td><td>$${a.costo}</td>
+    <tr><td><strong>${a.id}</strong></td><td>${a.fecha}</td><td>${a.animalId}</td><td>${a.alimento}</td><td>${a.cantidad} ${a.unidad}</td><td>${a.dieta||'-'}</td><td>${MONEY()}${a.costo}</td>
     <td><button class="btn btn-secondary btn-icon" onclick="openModal('alimentacion','${a.id}')">✏️</button><button class="btn btn-danger btn-icon" onclick="deleteItem('alimentacion','${a.id}')">🗑️</button></td></tr>
   `).join(''):'<tr><td colspan="8" class="empty">Sin registros</td></tr>';
 }
@@ -1631,19 +1631,19 @@ function renderInventario(){
   const f=document.getElementById('filter-inv-cat')?.value||'';
   const filtered=DB.inventario.filter(i=>!f||i.categoria===f);
   document.getElementById('tabla-inventario').innerHTML=filtered.length?filtered.map(i=>`
-    <tr><td><strong>${i.codigo}</strong></td><td>${i.nombre}</td><td>${i.categoria}</td><td>${i.unidad}</td><td>${i.existencia}</td><td>$${i.costo}</td><td>${i.vencimiento}</td><td>${i.proveedor}</td>
+    <tr><td><strong>${i.codigo}</strong></td><td>${i.nombre}</td><td>${i.categoria}</td><td>${i.unidad}</td><td>${i.existencia}</td><td>${MONEY()}${i.costo}</td><td>${i.vencimiento}</td><td>${i.proveedor}</td>
     <td><button class="btn btn-secondary btn-icon" onclick="openModal('inventario','${i.codigo}')">✏️</button><button class="btn btn-danger btn-icon" onclick="deleteItem('inventario','${i.codigo}')">🗑️</button></td></tr>
   `).join(''):'<tr><td colspan="9" class="empty">Sin productos</td></tr>';
 }
 function renderCompras(){
   document.getElementById('tabla-compras').innerHTML=DB.compras.length?DB.compras.map(c=>`
-    <tr><td><strong>${c.id}</strong></td><td>${c.fecha}</td><td>${c.proveedor}</td><td>${c.documento}</td><td>${c.productos}</td><td><strong>$${c.total}</strong></td><td><span class="status ${c.estado==='Pagada'?'active':c.estado==='Pendiente'?'pending':'sold'}">${c.estado}</span></td>
+    <tr><td><strong>${c.id}</strong></td><td>${c.fecha}</td><td>${c.proveedor}</td><td>${c.documento}</td><td>${c.productos}</td><td><strong>${MONEY()}${c.total}</strong></td><td><span class="status ${c.estado==='Pagada'?'active':c.estado==='Pendiente'?'pending':'sold'}">${c.estado}</span></td>
     <td><button class="btn btn-secondary btn-icon" onclick="openModal('compra','${c.id}')">✏️</button><button class="btn btn-danger btn-icon" onclick="deleteItem('compra','${c.id}')">🗑️</button></td></tr>
   `).join(''):'<tr><td colspan="8" class="empty">Sin compras</td></tr>';
 }
 function renderVentas(){
   document.getElementById('tabla-ventas').innerHTML=DB.ventas.length?DB.ventas.map(v=>`
-    <tr><td><strong>${v.id}</strong></td><td>${v.fecha}</td><td>${v.cliente}</td><td>${v.animal}</td><td>${v.peso?v.peso+' kg':'-'} / $${v.precioKg}</td><td><strong>$${v.total}</strong></td><td><span class="status ${v.estado==='Pagada'?'active':v.estado==='Pendiente'?'pending':'sold'}">${v.estado}</span></td>
+    <tr><td><strong>${v.id}</strong></td><td>${v.fecha}</td><td>${v.cliente}</td><td>${v.animal}</td><td>${v.peso?v.peso+' kg':'-'} / ${MONEY()}${v.precioKg}</td><td><strong>${MONEY()}${v.total}</strong></td><td><span class="status ${v.estado==='Pagada'?'active':v.estado==='Pendiente'?'pending':'sold'}">${v.estado}</span></td>
     <td><button class="btn btn-secondary btn-icon" onclick="openModal('venta','${v.id}')">✏️</button><button class="btn btn-danger btn-icon" onclick="deleteItem('venta','${v.id}')">🗑️</button></td></tr>
   `).join(''):'<tr><td colspan="8" class="empty">Sin ventas</td></tr>';
 }
@@ -1662,12 +1662,12 @@ function renderProveedores(){
 function renderFinanzas(){
   const ing=DB.finanzas.filter(f=>f.tipo==='Ingreso').reduce((s,f)=>s+f.monto,0);
   const gas=DB.finanzas.filter(f=>f.tipo==='Gasto').reduce((s,f)=>s+f.monto,0);
-  document.getElementById('fin-ingresos').textContent='$'+ing.toLocaleString();
-  document.getElementById('fin-gastos').textContent='$'+gas.toLocaleString();
-  document.getElementById('fin-balance').textContent='$'+(ing-gas).toLocaleString();
+  document.getElementById('fin-ingresos').textContent=MONEY()+ing.toLocaleString();
+  document.getElementById('fin-gastos').textContent=MONEY()+gas.toLocaleString();
+  document.getElementById('fin-balance').textContent=MONEY()+(ing-gas).toLocaleString();
   document.getElementById('fin-balance').style.color=(ing-gas)>=0?'var(--green)':'var(--red)';
   document.getElementById('tabla-finanzas').innerHTML=DB.finanzas.length?DB.finanzas.map(f=>`
-    <tr><td><strong>${f.id}</strong></td><td>${f.fecha}</td><td><span class="status ${f.tipo==='Ingreso'?'active':'inactive'}">${f.tipo}</span></td><td>${f.categoria}</td><td>${f.concepto}</td><td style="color:${f.tipo==='Ingreso'?'var(--green)':'var(--red)'};font-weight:700">${f.tipo==='Ingreso'?'+':'-'}$${f.monto}</td><td>${f.referencia}</td>
+    <tr><td><strong>${f.id}</strong></td><td>${f.fecha}</td><td><span class="status ${f.tipo==='Ingreso'?'active':'inactive'}">${f.tipo}</span></td><td>${f.categoria}</td><td>${f.concepto}</td><td style="color:${f.tipo==='Ingreso'?'var(--green)':'var(--red)'};font-weight:700">${f.tipo==='Ingreso'?'+':'-'}${MONEY()}${f.monto}</td><td>${f.referencia}</td>
     <td><button class="btn btn-secondary btn-icon" onclick="openModal('finanza','${f.id}')">✏️</button><button class="btn btn-danger btn-icon" onclick="deleteItem('finanza','${f.id}')">🗑️</button></td></tr>
   `).join(''):'<tr><td colspan="8" class="empty">Sin movimientos</td></tr>';
 }
@@ -1761,27 +1761,27 @@ function generarReporte(tipo){
   } else if(tipo==='sanidad'){
     html+=`<h3 style="color:var(--navy);border-bottom:2px solid var(--green);padding-bottom:8px">💉 Reporte Sanitario</h3><div class="metrics-grid" style="margin:20px 0">
       <div class="metric-card"><div class="m-label">Total Eventos</div><div class="m-value">${DB.sanidad.length}</div></div>
-      <div class="metric-card red"><div class="m-label">Costo Total</div><div class="m-value">$${DB.sanidad.reduce((s,x)=>s+x.costo,0)}</div></div>
+      <div class="metric-card red"><div class="m-label">Costo Total</div><div class="m-value">${MONEY()}${DB.sanidad.reduce((s,x)=>s+x.costo,0)}</div></div>
     </div>`;
   } else if(tipo==='finanzas'){
     const ing=DB.finanzas.filter(f=>f.tipo==='Ingreso').reduce((s,f)=>s+f.monto,0);
     const gas=DB.finanzas.filter(f=>f.tipo==='Gasto').reduce((s,f)=>s+f.monto,0);
     html+=`<h3 style="color:var(--navy);border-bottom:2px solid var(--green);padding-bottom:8px">💰 Reporte Financiero</h3><div class="metrics-grid" style="margin:20px 0">
-      <div class="metric-card"><div class="m-label">Ingresos</div><div class="m-value" style="color:var(--green)">$${ing.toLocaleString()}</div></div>
-      <div class="metric-card red"><div class="m-label">Gastos</div><div class="m-value" style="color:var(--red)">$${gas.toLocaleString()}</div></div>
-      <div class="metric-card blue"><div class="m-label">Balance</div><div class="m-value">$${(ing-gas).toLocaleString()}</div></div>
+      <div class="metric-card"><div class="m-label">Ingresos</div><div class="m-value" style="color:var(--green)">${MONEY()}${ing.toLocaleString()}</div></div>
+      <div class="metric-card red"><div class="m-label">Gastos</div><div class="m-value" style="color:var(--red)">${MONEY()}${gas.toLocaleString()}</div></div>
+      <div class="metric-card blue"><div class="m-label">Balance</div><div class="m-value">${MONEY()}${(ing-gas).toLocaleString()}</div></div>
     </div>`;
   } else if(tipo==='ventas'){
     const total=DB.ventas.reduce((s,v)=>s+v.total,0);
     html+=`<h3 style="color:var(--navy);border-bottom:2px solid var(--green);padding-bottom:8px">🛒 Reporte de Ventas</h3><div class="metrics-grid" style="margin:20px 0">
       <div class="metric-card"><div class="m-label">Total Ventas</div><div class="m-value">${DB.ventas.length}</div></div>
-      <div class="metric-card green"><div class="m-label">Ingresos</div><div class="m-value">$${total.toLocaleString()}</div></div>
+      <div class="metric-card green"><div class="m-label">Ingresos</div><div class="m-value">${MONEY()}${total.toLocaleString()}</div></div>
     </div>`;
   } else if(tipo==='compras'){
     const total=DB.compras.reduce((s,c)=>s+c.total,0);
     html+=`<h3 style="color:var(--navy);border-bottom:2px solid var(--green);padding-bottom:8px">📋 Reporte de Compras</h3><div class="metrics-grid" style="margin:20px 0">
       <div class="metric-card"><div class="m-label">Total Compras</div><div class="m-value">${DB.compras.length}</div></div>
-      <div class="metric-card red"><div class="m-label">Gastos</div><div class="m-value">$${total.toLocaleString()}</div></div>
+      <div class="metric-card red"><div class="m-label">Gastos</div><div class="m-value">${MONEY()}${total.toLocaleString()}</div></div>
     </div>`;
   }
   html+=`<div style="margin-top:20px;text-align:right"><button class="btn btn-primary" onclick="window.print()">️ Imprimir Reporte</button></div>`;
@@ -1908,6 +1908,7 @@ function getCompanyHeader(){
 }
 
 // ==================== INIT ====================
+function MONEY(){ return DB.config?.moneda||'$'; }
 loadDB();
 renderDashboard();
 Object.keys(DB.tags||{}).forEach(k=>renderTagsFromKey(k));
