@@ -1,6 +1,6 @@
 {
   "name": "ganadero-erp-pro",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Sistema Integral de Gestión Ganadera - ERP de Escritorio",
   "main": "main.js",
   "scripts": {
@@ -35,14 +35,14 @@
           "arch": ["x64"]
         }
       ],
-      "icon": "app/logo.png"
+      "icon": "icon.ico"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "app/logo.png",
-      "uninstallerIcon": "app/logo.png",
-      "installerHeaderIcon": "app/logo.png",
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico",
+      "installerHeaderIcon": "icon.ico",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "GANADERO ERP PRO"
