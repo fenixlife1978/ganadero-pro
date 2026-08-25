@@ -121,7 +121,7 @@ function createWindow() {
     }
   });
   mainWindow.setMenu(null);
-  mainWindow.loadFile(path.join(__dirname, 'app', 'index.html'));
+  mainWindow.loadFile(path.join(__dirname, 'ganadero_pro_v1.html'));
   if (IS_DEMO) mainWindow.setTitle('GANADERO ERP PRO - MODO DEMO');
 }
 
