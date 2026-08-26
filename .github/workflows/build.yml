@@ -1,0 +1,94 @@
+name: Build GANADERO ERP PRO
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-installer:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Installer (.exe)
+        run: npm run build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: GANADERO-ERP-PRO-Installer
+          path: dist/*.exe
+          if-no-files-found: error
+
+  build-demo:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Demo (.exe)
+        run: npm run build:demo
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEMO_MODE: true
+
+      - name: Upload Demo
+        uses: actions/upload-artifact@v4
+        with:
+          name: GANADERO-ERP-PRO-Demo
+          path: dist/*.exe
+          if-no-files-found: error
+
+  release:
+    needs: [build-installer, build-demo]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+      - name: Download Installer
+        uses: actions/download-artifact@v4
+        with:
+          name: GANADERO-ERP-PRO-Installer
+          path: release
+
+      - name: Download Demo
+        uses: actions/download-artifact@v4
+        with:
+          name: GANADERO-ERP-PRO-Demo
+          path: release
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/*.exe
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
