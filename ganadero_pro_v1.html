@@ -252,7 +252,60 @@ body{display:block;min-height:100vh;overflow:hidden;font-family:'Segoe UI',Arial
 .ref-tool-icon{width:31px;height:31px;object-fit:contain;display:block;}
 .bell-ref-img{width:52px;height:52px;object-fit:contain;display:block;margin:-1px;}
 .replica-nav-item .ri{display:flex!important;align-items:center;justify-content:center;width:30px!important;height:30px!important;font-size:0!important;}
-.rep-metric-icon{font-size:0!important;}
+  .rep-metric-icon{font-size:0!important;}
+
+  /* Fix broken base64 icons - hide img, show emoji via data-page */
+  .replica-nav-item .ref-nav-icon{display:none!important;}
+  .replica-nav-item[data-page="dashboard"] .ri::before{content:"📊"}
+  .replica-nav-item[data-page="animales"] .ri::before{content:"🐄"}
+  .replica-nav-item[data-page="potreros"] .ri::before{content:"🌿"}
+  .replica-nav-item[data-page="sanidad"] .ri::before{content:"💉"}
+  .replica-nav-item[data-page="reproduccion"] .ri::before{content:"🧬"}
+  .replica-nav-item[data-page="alimentacion"] .ri::before{content:"🌾"}
+  .replica-nav-item[data-page="produccion"] .ri::before{content:"🥛"}
+  .replica-nav-item[data-page="movimientos"] .ri::before{content:"⇄"}
+  .replica-nav-item[data-page="reportes"] .ri::before{content:"📋"}
+  .replica-nav-item[data-page="inventario"] .ri::before{content:"📦"}
+  .replica-nav-item[data-page="finanzas"] .ri::before{content:"💰"}
+  .replica-nav-item[data-page="usuarios"] .ri::before{content:"👥"}
+  .replica-nav-item[data-page="configuracion"] .ri::before{content:"⚙️"}
+  .replica-nav-item[data-page="hato"] .ri::before{content:"🐑"}
+  .replica-nav-item[data-page="pesajes"] .ri::before{content:"⚖️"}
+  .replica-nav-item[data-page="maquinaria"] .ri::before{content:"🚜"}
+  .replica-nav-item[data-page="medicamentos"] .ri::before{content:"💊"}
+  .replica-nav-item[data-page="compras"] .ri::before{content:"🛒"}
+  .replica-nav-item[data-page="ventas"] .ri::before{content:"💸"}
+  .replica-nav-item[data-page="clientes"] .ri::before{content:"👤"}
+  .replica-nav-item[data-page="proveedores"] .ri::before{content:"🏭"}
+  .replica-nav-item[data-page="backups"] .ri::before{content:"💾"}
+  .replica-nav-item[data-page="auditoria"] .ri::before{content:"📋"}
+  .replica-nav-item[data-page="documentos"] .ri::before{content:"📄"}
+
+  /* Fix broken base64 icons in page headers */
+  .page-header h2 .ref-nav-icon{display:none!important;}
+  #page-animales .page-header h2::before{content:"🐄 "}
+  #page-reproduccion .page-header h2::before{content:"🧬 "}
+  #page-produccion .page-header h2::before{content:"🥛 "}
+  #page-sanidad .page-header h2::before{content:"💉 "}
+  #page-potreros .page-header h2::before{content:"🌿 "}
+  #page-alimentacion .page-header h2::before{content:"🌾 "}
+  #page-inventario .page-header h2::before{content:"📦 "}
+  #page-finanzas .page-header h2::before{content:"💰 "}
+  #page-movimientos .page-header h2::before{content:"⇄ "}
+  #page-reportes .page-header h2::before{content:"📋 "}
+
+  /* Fix tab icons in animal detail modal */
+  .tabs .tab[onclick*="ficha-datos"]::before{content:"📋 "}
+  .tabs .tab[onclick*="ficha-peso"]::before{content:"⚖️ "}
+  .tabs .tab[onclick*="ficha-repro"]::before{content:"🧬 "}
+  .tabs .tab[onclick*="ficha-sanidad"]::before{content:"💉 "}
+  .tabs .tab[onclick*="ficha-alim"]::before{content:"🌾 "}
+  .tabs .tab[onclick*="ficha-prod"]::before{content:"🥛 "}
+  .tabs .tab[onclick*="ficha-potreros"]::before{content:"🌿 "}
+  .tabs .tab[onclick*="ficha-mov"]::before{content:"⇄ "}
+  .tabs .tab[onclick*="ficha-doc"]::before{content:"📄 "}
+  .tabs .tab[onclick*="ficha-vida"]::before{content:"📅 "}
+  .tabs .tab .ref-nav-icon{display:none!important;}
 
 
 /* ===== SIDEBAR / RESPONSIVE v2 ===== */
