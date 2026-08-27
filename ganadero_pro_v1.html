@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GANADERO ERP PRO - Sistema Integral de Gestión Ganadera</title>
+<title>ganadero Pro v1.0 - Sistema Integral de Gestión Ganadera</title>
 <style>
 :root{
   --navy:#0f1b2d;--navy-light:#1a2d45;--navy-dark:#0a1420;
@@ -235,14 +235,14 @@ body{display:block;min-height:100vh;overflow:hidden;font-family:'Segoe UI',Arial
 .content{padding:0 18px 12px!important;height:calc(100vh - 92px);overflow:hidden;background:#080d0f}
 .page{height:100%;overflow:hidden}.page.active{display:block}
 #page-dashboard{padding-top:0;position:relative}.dashboard-toolbar{height:60px;display:flex;justify-content:flex-end;align-items:center}.new-record-replica{background:#3c9208;color:#fff;border:0;border-radius:6px;padding:9px 14px;font-size:14px;cursor:pointer;box-shadow:0 0 0 1px rgba(126,223,38,.15)}.new-record-replica b{margin-left:18px}
-.hero-metrics{display:grid;grid-template-columns:1.15fr 1.12fr .95fr .9fr 1.1fr 1.12fr;gap:10px;margin:0 0 12px}.rep-metric{height:114px;background:linear-gradient(145deg,#151b1d,#101517);border:1px solid #343b3d;border-radius:10px;display:flex;align-items:center;padding:12px 13px;gap:13px;box-shadow:inset 0 1px 0 rgba(255,255,255,.02)}.rep-metric-icon{width:54px;height:54px;display:flex;align-items:center;justify-content:center;font-size:37px;color:#e8e9e8;filter:drop-shadow(0 1px 1px #000)}.rep-metric-icon.cow{color:#65d51b}.rep-metric small{display:block;font-size:13px;color:#e5e8e8;margin-bottom:7px}.rep-metric strong{display:block;font-size:27px;line-height:1;color:#f1f3f2;font-weight:500}.rep-metric strong span{font-size:18px}.rep-metric em{font-style:normal;font-size:12px;color:#6fe01c;display:block;margin-top:8px}.rep-metric em.muted{color:#e0e2e2}.rep-metric em.muted b{color:#6fe01c;font-weight:500}.rep-metric.income .rep-metric-icon{border:2px solid #70c929;border-radius:50%;color:#72db24;font-size:32px}.rep-metric.milk .rep-metric-icon{font-size:43px}
-.dashboard-grid-top{display:grid;grid-template-columns:1.02fr 1.34fr 1.08fr;gap:10px;height:346px}.rep-card{background:linear-gradient(145deg,#111719,#0d1315);border:1px solid #30383b;border-radius:10px;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.015)}.rep-card-head{height:55px;padding:0 15px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2a3235}.rep-card-head h3{font-size:16px;font-weight:500;color:#f1f3f3}.rep-card-head button,.rep-card-head select{background:#101619;color:#e5e7e7;border:1px solid #394144;border-radius:6px;padding:7px 11px;font-size:12px}.rep-activity-list{padding:0 14px}.rep-activity-list>div{height:59px!important;padding:8px 0!important}.rep-activity-list>div>div:first-child{width:34px!important;height:34px!important;background:#285d11!important;border-radius:7px!important;color:#e9f5e6}.rep-activity-list>div>div:nth-child(2)>div:first-child{font-size:13px!important;color:#f0f2f1}.rep-activity-list>div>div:nth-child(2)>div:last-child{font-size:11px!important;color:#a8afb0!important}.rep-activity-list>div>div:last-child{color:#77d82a!important;font-size:10px!important}
+.hero-metrics{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:0 0 12px;overflow-x:auto;padding-bottom:8px}.rep-metric{height:114px;background:linear-gradient(145deg,#151b1d,#101517);border:1px solid #343b3d;border-radius:10px;display:flex;align-items:center;padding:12px 13px;gap:13px;box-shadow:inset 0 1px 0 rgba(255,255,255,.02)}.rep-metric-icon{width:54px;height:54px;display:flex;align-items:center;justify-content:center;font-size:37px;color:#e8e9e8;filter:drop-shadow(0 1px 1px #000)}.rep-metric-icon.cow{color:#65d51b}.rep-metric small{display:block;font-size:13px;color:#e5e8e8;margin-bottom:7px}.rep-metric strong{display:block;font-size:27px;line-height:1;color:#f1f3f2;font-weight:500}.rep-metric strong span{font-size:18px}.rep-metric em{font-style:normal;font-size:12px;color:#6fe01c;display:block;margin-top:8px}.rep-metric em.muted{color:#e0e2e2}.rep-metric em.muted b{color:#6fe01c;font-weight:500}.rep-metric.income .rep-metric-icon{border:2px solid #70c929;border-radius:50%;color:#72db24;font-size:32px}.rep-metric.milk .rep-metric-icon{font-size:43px}
+.dashboard-grid-top{display:grid;grid-template-columns:1.02fr 1.34fr 1.08fr;gap:10px;height:346px}.rep-card{background:linear-gradient(145deg,#111719,#0d1315);border:1px solid #30383b;border-radius:10px;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.015)}.rep-card-head{height:55px;padding:0 15px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2a3235}.rep-card-head h3{font-size:16px;font-weight:500;color:#f1f3f3}.rep-card-head button,.rep-card-head select{background:#101619;color:#e5e7e7;border:1px solid #394144;border-radius:6px;padding:7px 11px;font-size:12px}.rep-activity-list{padding:0 14px;max-height:260px;overflow-y:auto}.rep-activity-list>div{height:59px!important;padding:8px 0!important}.rep-activity-list>div>div:first-child{width:34px!important;height:34px!important;background:#285d11!important;border-radius:7px!important;color:#e9f5e6}.rep-activity-list>div>div:nth-child(2)>div:first-child{font-size:13px!important;color:#f0f2f1}.rep-activity-list>div>div:nth-child(2)>div:last-child{font-size:11px!important;color:#a8afb0!important}.rep-activity-list>div>div:last-child{color:#77d82a!important;font-size:10px!important}
 .line-chart-replica{height:288px;position:relative;padding:18px 16px 0 38px;background:repeating-linear-gradient(to bottom,transparent 0,transparent 49px,rgba(255,255,255,.035) 50px),repeating-linear-gradient(to right,transparent 0,transparent 78px,rgba(255,255,255,.025) 79px)}.line-chart-replica svg{position:absolute;left:38px;right:12px;top:14px;width:calc(100% - 50px);height:225px}.chart-ylabels{position:absolute;left:13px;top:15px;bottom:53px;display:flex;flex-direction:column;justify-content:space-between;color:#c7cccd;font-size:11px}.chart-xlabels{position:absolute;left:38px;right:12px;bottom:15px;display:flex;justify-content:space-between;color:#c7cccd;font-size:11px}.chart-tooltip-replica{position:absolute;top:12px;right:82px;background:#141b1d;border:1px solid #414a4d;border-radius:7px;padding:7px 10px;font-size:10px;color:#cdd2d2;box-shadow:0 6px 16px #0008}.chart-tooltip-replica b{font-size:15px;color:#fff}.category-card{padding-bottom:14px}.donut-replica{width:190px;height:190px;border-radius:50%;margin:14px auto 8px;background:conic-gradient(#64c61b 0 51.4%,#e3c12a 51.4% 81.7%,#547bd1 81.7% 83.9%,#8e58b7 83.9% 93.5%,#777 93.5% 100%);position:relative;box-shadow:0 0 0 1px #000}.donut-hole{position:absolute;inset:42px;border-radius:50%;background:#111719;display:flex;align-items:center;justify-content:center;flex-direction:column}.donut-hole strong{font-size:24px;font-weight:500}.donut-hole span{font-size:12px;color:#d7dada}.category-legend{padding:0 18px}.category-legend>div{display:flex;align-items:center;gap:8px;font-size:12px;height:27px;color:#ddd}.category-legend i{width:10px;height:10px;border-radius:3px;display:inline-block}.category-legend b{margin-left:auto;font-weight:400}.c-green{background:#63c61a}.c-yellow{background:#e1c329}.c-blue{background:#557bd0}.c-purple{background:#8d58b8}.c-gray{background:#777}
-.dashboard-grid-bottom{display:grid;grid-template-columns:1.38fr .98fr 1.02fr;gap:10px;height:290px;margin-top:10px}.paddock-table{padding:0 12px}.p-row{display:grid;grid-template-columns:1.45fr .75fr .7fr .75fr 1.55fr;align-items:center;height:36px;border-bottom:1px solid #2b3335;font-size:12px;color:#d9dddd}.p-row.p-head{height:35px;background:#151c1e;border-radius:5px 5px 0 0;color:#e6e9e8}.p-row span:first-child{padding-left:9px}.p-row>span:last-child{display:flex;align-items:center;gap:10px}.p-row i{width:68px;height:8px;background:#273127;border-radius:5px;display:inline-block;overflow:hidden}.p-row i b{height:100%;display:block;background:linear-gradient(90deg,#69c920,#80dc30);border-radius:5px}.upcoming-replica{padding:0 14px}.upcoming-replica>div{height:58px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #2a3234}.upcoming-replica i{width:29px;height:29px;border-radius:6px;background:#5d8518;color:#fff;display:flex;align-items:center;justify-content:center;font-style:normal}.upcoming-replica span{font-size:13px;flex:1}.upcoming-replica span small{display:block;color:#a8afb0;font-size:11px;margin-top:3px}.upcoming-replica b{font-size:11px;color:#7bdc29;font-weight:400}.weather-card{padding-bottom:10px}.weather-card .rep-card-head span{font-size:11px;color:#d2d6d5}.weather-main{height:142px;display:flex;align-items:center;gap:20px;padding:5px 22px}.weather-art{font-size:54px;width:125px}.weather-main strong{font-size:40px;font-weight:400}.weather-main p{font-size:11px;color:#d5d9d9;line-height:1.8}.forecast{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;padding:0 10px}.forecast>div{height:92px;border:1px solid #313a3d;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;font-size:10px}.forecast span{font-size:20px}.forecast strong{font-size:13px}.forecast small{color:#b8bfc0}
+.dashboard-grid-bottom{display:grid;grid-template-columns:1.38fr 1.02fr;gap:10px;margin-top:10px}.dashboard-grid-bottom .rep-card{height:auto;max-height:320px;overflow-y:auto}.paddock-table{padding:0 12px;max-height:240px;overflow-y:auto}.p-row{display:grid;grid-template-columns:1.45fr .75fr .7fr .75fr 1.55fr;align-items:center;height:36px;border-bottom:1px solid #2b3335;font-size:12px;color:#d9dddd}.p-row.p-head{height:35px;background:#151c1e;border-radius:5px 5px 0 0;color:#e6e9e8}.p-row span:first-child{padding-left:9px}.p-row>span:last-child{display:flex;align-items:center;gap:10px}.p-row i{width:68px;height:8px;background:#273127;border-radius:5px;display:inline-block;overflow:hidden}.p-row i b{height:100%;display:block;background:linear-gradient(90deg,#69c920,#80dc30);border-radius:5px}.upcoming-replica{padding:0 14px;max-height:260px;overflow-y:auto}.upcoming-replica>div{height:58px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #2a3234}.upcoming-replica i{width:29px;height:29px;border-radius:6px;background:#5d8518;color:#fff;display:flex;align-items:center;justify-content:center;font-style:normal}.upcoming-replica span{font-size:13px;flex:1}.upcoming-replica span small{display:block;color:#a8afb0;font-size:11px;margin-top:3px}.upcoming-replica b{font-size:11px;color:#7bdc29;font-weight:400}.weather-card{padding-bottom:10px}.weather-card .rep-card-head span{font-size:11px;color:#d2d6d5}.weather-main{height:142px;display:flex;align-items:center;gap:20px;padding:5px 22px}.weather-art{font-size:54px;width:125px}.weather-main strong{font-size:40px;font-weight:400}.weather-main p{font-size:11px;color:#d5d9d9;line-height:1.8}.forecast{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;padding:0 10px}.forecast>div{height:92px;border:1px solid #313a3d;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;font-size:10px}.forecast span{font-size:20px}.forecast strong{font-size:13px}.forecast small{color:#b8bfc0}
 #page-dashboard~.page{color:#fff}
 /* Keep all existing modules functional while using the dark skin */
 .page:not(#page-dashboard) .page-header h2{color:#fff}.page:not(#page-dashboard) .card,.page:not(#page-dashboard) .metric-card,.page:not(#page-dashboard) .kpi-card{background:#101719;color:#e7eaea;border-color:#30383b}.page:not(#page-dashboard) table td,.page:not(#page-dashboard) table th{color:#d8dddd;border-color:#2a3335}.page:not(#page-dashboard) .form-group input,.page:not(#page-dashboard) .form-group select,.page:not(#page-dashboard) .form-group textarea,.page:not(#page-dashboard) .filters input,.page:not(#page-dashboard) .filters select{background:#0d1315;color:#fff;border-color:#374043}.page:not(#page-dashboard) .modal{background:#111819;color:#fff}.page:not(#page-dashboard) .modal-header,.page:not(#page-dashboard) .modal-footer{border-color:#30383b}
-@media(max-width:1200px){.hero-metrics{grid-template-columns:repeat(3,1fr)}.dashboard-grid-top,.dashboard-grid-bottom{grid-template-columns:1fr 1fr}.category-card{grid-column:1/-1}.weather-card{grid-column:1/-1}}
+@media(max-width:1200px){.hero-metrics{grid-template-columns:repeat(3,1fr)}.dashboard-grid-top,.dashboard-grid-bottom{grid-template-columns:1fr 1fr}.category-card{grid-column:1/-1}}
 @media(max-width:800px){.sidebar.replica-sidebar{width:220px}.main{margin-left:224px!important}.header-tools-replica{display:none}.hero-metrics{grid-template-columns:1fr 1fr}.dashboard-grid-top,.dashboard-grid-bottom{grid-template-columns:1fr}.content{overflow:auto}.page{overflow:visible}}
 
 
@@ -254,58 +254,32 @@ body{display:block;min-height:100vh;overflow:hidden;font-family:'Segoe UI',Arial
 .replica-nav-item .ri{display:flex!important;align-items:center;justify-content:center;width:30px!important;height:30px!important;font-size:0!important;}
   .rep-metric-icon{font-size:0!important;}
 
-  /* Fix broken base64 icons - hide img, show emoji via data-page */
-  .replica-nav-item .ref-nav-icon{display:none!important;}
-  .replica-nav-item[data-page="dashboard"] .ri::before{content:"📊"}
-  .replica-nav-item[data-page="animales"] .ri::before{content:"🐄"}
-  .replica-nav-item[data-page="potreros"] .ri::before{content:"🌿"}
-  .replica-nav-item[data-page="sanidad"] .ri::before{content:"💉"}
-  .replica-nav-item[data-page="reproduccion"] .ri::before{content:"🧬"}
-  .replica-nav-item[data-page="alimentacion"] .ri::before{content:"🌾"}
-  .replica-nav-item[data-page="produccion"] .ri::before{content:"🥛"}
-  .replica-nav-item[data-page="movimientos"] .ri::before{content:"⇄"}
-  .replica-nav-item[data-page="reportes"] .ri::before{content:"📋"}
-  .replica-nav-item[data-page="inventario"] .ri::before{content:"📦"}
-  .replica-nav-item[data-page="finanzas"] .ri::before{content:"💰"}
-  .replica-nav-item[data-page="usuarios"] .ri::before{content:"👥"}
-  .replica-nav-item[data-page="configuracion"] .ri::before{content:"⚙️"}
-  .replica-nav-item[data-page="hato"] .ri::before{content:"🐑"}
-  .replica-nav-item[data-page="pesajes"] .ri::before{content:"⚖️"}
-  .replica-nav-item[data-page="maquinaria"] .ri::before{content:"🚜"}
-  .replica-nav-item[data-page="medicamentos"] .ri::before{content:"💊"}
-  .replica-nav-item[data-page="compras"] .ri::before{content:"🛒"}
-  .replica-nav-item[data-page="ventas"] .ri::before{content:"💸"}
-  .replica-nav-item[data-page="clientes"] .ri::before{content:"👤"}
-  .replica-nav-item[data-page="proveedores"] .ri::before{content:"🏭"}
-  .replica-nav-item[data-page="backups"] .ri::before{content:"💾"}
-  .replica-nav-item[data-page="auditoria"] .ri::before{content:"📋"}
-  .replica-nav-item[data-page="documentos"] .ri::before{content:"📄"}
-
-  /* Fix broken base64 icons in page headers */
-  .page-header h2 .ref-nav-icon{display:none!important;}
-  #page-animales .page-header h2::before{content:"🐄 "}
-  #page-reproduccion .page-header h2::before{content:"🧬 "}
-  #page-produccion .page-header h2::before{content:"🥛 "}
-  #page-sanidad .page-header h2::before{content:"💉 "}
-  #page-potreros .page-header h2::before{content:"🌿 "}
-  #page-alimentacion .page-header h2::before{content:"🌾 "}
-  #page-inventario .page-header h2::before{content:"📦 "}
-  #page-finanzas .page-header h2::before{content:"💰 "}
-  #page-movimientos .page-header h2::before{content:"⇄ "}
-  #page-reportes .page-header h2::before{content:"📋 "}
-
-  /* Fix tab icons in animal detail modal */
-  .tabs .tab[onclick*="ficha-datos"]::before{content:"📋 "}
-  .tabs .tab[onclick*="ficha-peso"]::before{content:"⚖️ "}
-  .tabs .tab[onclick*="ficha-repro"]::before{content:"🧬 "}
-  .tabs .tab[onclick*="ficha-sanidad"]::before{content:"💉 "}
-  .tabs .tab[onclick*="ficha-alim"]::before{content:"🌾 "}
-  .tabs .tab[onclick*="ficha-prod"]::before{content:"🥛 "}
-  .tabs .tab[onclick*="ficha-potreros"]::before{content:"🌿 "}
-  .tabs .tab[onclick*="ficha-mov"]::before{content:"⇄ "}
-  .tabs .tab[onclick*="ficha-doc"]::before{content:"📄 "}
-  .tabs .tab[onclick*="ficha-vida"]::before{content:"📅 "}
-  .tabs .tab .ref-nav-icon{display:none!important;}
+  /* Base64 icons styles - show the actual icons */
+  .replica-nav-item .ref-nav-icon {
+    display: block !important;
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+  }
+  .replica-nav-item .ri {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+  .page-header h2 .ref-nav-icon {
+    display: inline-block !important;
+    width: 28px;
+    height: 28px;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  .tabs .tab .ref-nav-icon {
+    display: inline-block !important;
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    margin-right: 4px;
+  }
 
 
 /* ===== SIDEBAR / RESPONSIVE v2 ===== */
@@ -350,7 +324,7 @@ body.sidebar-mobile .sidebar-overlay{display:block}
  .header-tools-replica{display:none!important}.content{padding:16px!important}
  .hero-metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}
  .dashboard-grid-top,.dashboard-grid-bottom{grid-template-columns:1fr!important;height:auto!important}
- .category-card,.weather-card{grid-column:auto!important}.rep-card{min-height:260px}
+ .category-card{grid-column:auto!important}.rep-card{min-height:260px}
 }
 @media(max-width:560px){
  .content{padding:10px!important}.hero-metrics{grid-template-columns:1fr!important}
@@ -414,7 +388,7 @@ body.sidebar-mobile .sidebar-overlay{display:block}
   </div>
   <div class="header-tools-replica">
     <button class="date-box-replica"><span class="tool-icon"><img class="ref-tool-icon" src="data:image/png;base64,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" alt=""></span><span><b>24 de mayo, 2026</b><small>Domingo</small></span></button>
-    <button class="weather-box-replica"><span class="weather-symbol">☀</span><span><b>27°C</b><small>Parcialmente nublado</small></span></button>
+
     <button class="bell-replica">♟<i>3</i></button>
   </div>
 </header>
@@ -442,7 +416,7 @@ body.sidebar-mobile .sidebar-overlay{display:block}
   <section class="dashboard-grid-bottom">
     <div class="rep-card paddock-card"><div class="rep-card-head"><h3>Animales por Potrero</h3><button onclick="navigate('potreros')">Ver mapa</button></div><div class="paddock-table"><div class="p-row p-head"><span>Potrero</span><span>Área (ha)</span><span>Animales</span><span>Capacidad</span><span>Ocupación</span></div><div class="p-row"><span>▧ &nbsp; Potrero 1</span><span>25.5</span><span>28</span><span>40</span><span><i><b style="width:70%"></b></i>70%</span></div><div class="p-row"><span>▧ &nbsp; Potrero 2</span><span>18.0</span><span>35</span><span>35</span><span><i><b style="width:100%"></b></i>100%</span></div><div class="p-row"><span>▧ &nbsp; Potrero 3</span><span>30.2</span><span>42</span><span>50</span><span><i><b style="width:84%"></b></i>84%</span></div><div class="p-row"><span>▧ &nbsp; Potrero 4</span><span>22.5</span><span>25</span><span>40</span><span><i><b style="width:62%"></b></i>62%</span></div><div class="p-row"><span>▧ &nbsp; Potrero 5</span><span>15.0</span><span>18</span><span>30</span><span><i><b style="width:60%"></b></i>60%</span></div></div></div>
     <div class="rep-card upcoming-card"><div class="rep-card-head"><h3>Próximas Actividades</h3></div><div class="upcoming-replica"><div><i>♉</i><span>Vacunación Aftosa<small>Todo el hato</small></span><b>▦ 30 May</b></div><div><i>♧</i><span>Desparasitación<small>Terneros de 3 meses</small></span><b>▦ 02 Jun</b></div><div><i>♧</i><span>Chequeo Reproductivo<small>Vacas en servicio</small></span><b>▦ 05 Jun</b></div><div><i>⇄</i><span>Rotación de Potrero<small>Mover a Potrero 1</small></span><b>▦ 07 Jun</b></div></div></div>
-    <div class="rep-card weather-card"><div class="rep-card-head"><h3>Clima en la Finca</h3><span>⌖ Finca El Paraíso</span></div><div class="weather-main"><div class="weather-art">☀️☁️</div><div><strong>27°C</strong><p>Parcialmente nublado</p><p>Humedad: 68%<br>Viento: 12 km/h</p></div></div><div class="forecast"><div><b>Lun</b><span>🌤️</span><strong>28°C</strong><small>19°C</small></div><div><b>Mar</b><span>🌤️</span><strong>27°C</strong><small>18°C</small></div><div><b>Mié</b><span>🌦️</span><strong>26°C</strong><small>17°C</small></div><div><b>Jue</b><span>🌦️</span><strong>26°C</strong><small>17°C</small></div><div><b>Vie</b><span>🌤️</span><strong>27°C</strong><small>18°C</small></div></div></div>
+
   </section>
 </div>
 
@@ -610,7 +584,7 @@ body.sidebar-mobile .sidebar-overlay{display:block}
         <div class="card">
           <h3 style="margin-bottom:16px">Información del Sistema</h3>
           <div class="form-grid">
-            <div class="form-group"><label>Nombre del Sistema</label><input type="text" value="GANADERO ERP PRO"></div>
+            <div class="form-group"><label>Nombre del Sistema</label><input type="text" value="ganadero Pro v1.0"></div>
             <div class="form-group"><label>Versión</label><input type="text" value="3.0.0" readonly></div>
             <div class="form-group"><label>Idioma</label><select><option>Español</option><option>English</option></select></div>
             <div class="form-group"><label>Zona Horaria</label><select><option>América/Caracas (UTC-4)</option><option>América/Bogotá (UTC-5)</option></select></div>
@@ -1963,7 +1937,7 @@ function getCompanyHeader(){
   const area = cfg.areaTotal || '450';
   return `
     <div style="text-align:center;margin-bottom:30px;padding-bottom:20px;border-bottom:3px solid var(--navy)">
-      <div style="font-size:28px;font-weight:800;color:var(--navy);margin-bottom:4px">GANADERO ERP PRO</div>
+      <div style="font-size:28px;font-weight:800;color:var(--navy);margin-bottom:4px">ganadero Pro v1.0</div>
       <div style="font-size:16px;color:var(--text);font-weight:600;margin-bottom:12px">${finca}</div>
       <div style="font-size:12px;color:var(--text-light);display:flex;justify-content:center;gap:20px;flex-wrap:wrap">
         <span>RIF: ${rif}</span>
@@ -1995,7 +1969,7 @@ if(window.electronAPI && window.electronAPI.onDemoMode){
     if(isDemo){
       document.body.classList.add('demo-mode');
       const headerTitle = document.getElementById('header-title');
-      if(headerTitle) headerTitle.textContent = 'GANADERO ERP PRO - DEMO';
+      if(headerTitle) headerTitle.textContent = 'ganadero Pro v1.0 - DEMO';
       const badge = document.createElement('span');
       badge.id = 'demo-badge';
       badge.style.cssText = 'position:fixed;top:10px;right:10px;z-index:9999;background:#e74c3c;color:#fff;padding:4px 12px;border-radius:4px;font-size:11px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.3)';

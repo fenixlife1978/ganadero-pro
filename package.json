@@ -6,12 +6,12 @@
   "scripts": {
     "start": "electron .",
     "build": "electron-builder --win",
-    "build:demo": "cross-env DEMO_MODE=true electron-builder --win --config.productName=\"GANADERO ERP PRO DEMO\" --config.win.target.nsis.artifactName=\"GANADERO-ERP-PRO-DEMO-Setup-${version}.exe\" --config.win.target.portable.artifactName=\"GANADERO-ERP-PRO-DEMO-${version}-portable.exe\"",
+    "build:demo": "cross-env DEMO_MODE=true electron-builder --win --config.productName=\"ganadero Pro v1.0 DEMO\" --config.win.target.nsis.artifactName=\"ganadero-Pro-v1.0-DEMO-Setup-${version}.exe\" --config.win.target.portable.artifactName=\"ganadero-Pro-v1.0-DEMO-${version}-portable.exe\"",
     "postinstall": "electron-builder install-app-deps"
   },
   "build": {
     "appId": "com.ganadero.erp.pro",
-    "productName": "GANADERO ERP PRO",
+    "productName": "ganadero Pro v1.0",
     "directories": {
       "output": "dist"
     },
@@ -38,7 +38,7 @@
         }
       ],
       "icon": "icon.ico",
-      "artifactName": "GANADERO-ERP-PRO-Setup-${version}.exe"
+      "artifactName": "ganadero-Pro-v1.0-Setup-${version}.exe"
     },
     "nsis": {
       "oneClick": false,
@@ -51,7 +51,7 @@
       "shortcutName": "GANADERO ERP PRO"
     },
     "portable": {
-      "artifactName": "GANADERO-ERP-PRO-${version}-portable.exe"
+      "artifactName": "ganadero-Pro-v1.0-${version}-portable.exe"
     }
   },
   "dependencies": {
