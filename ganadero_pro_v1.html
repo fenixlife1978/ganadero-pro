@@ -1988,6 +1988,22 @@ document.getElementById('global-search').addEventListener('input',function(e){
 loadDB();
 // renderDashboard() y renderTagsFromKey se llaman dentro de loadDB
 if(window.matchMedia('(max-width:900px)').matches){toggleSidebar(false);}else{toggleSidebar(true);}
+
+// ==================== DEMO MODE ====================
+if(window.electronAPI && window.electronAPI.onDemoMode){
+  window.electronAPI.onDemoMode((isDemo) => {
+    if(isDemo){
+      document.body.classList.add('demo-mode');
+      const headerTitle = document.getElementById('header-title');
+      if(headerTitle) headerTitle.textContent = 'GANADERO ERP PRO - DEMO';
+      const badge = document.createElement('span');
+      badge.id = 'demo-badge';
+      badge.style.cssText = 'position:fixed;top:10px;right:10px;z-index:9999;background:#e74c3c;color:#fff;padding:4px 12px;border-radius:4px;font-size:11px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.3)';
+      badge.textContent = 'MODO DEMO';
+      document.body.appendChild(badge);
+    }
+  });
+}
 </script>
 </body>
 </html>

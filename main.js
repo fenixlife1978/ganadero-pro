@@ -112,8 +112,8 @@ function createWindow() {
     height: 900,
     minWidth: 1024,
     minHeight: 700,
-    title: 'GANADERO ERP PRO',
-    icon: path.join(__dirname, 'app', 'logo.png'),
+    title: IS_DEMO ? 'GANADERO ERP PRO - MODO DEMO' : 'GANADERO ERP PRO',
+    icon: path.join(__dirname, 'icon.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -122,7 +122,12 @@ function createWindow() {
   });
   mainWindow.setMenu(null);
   mainWindow.loadFile(path.join(__dirname, 'ganadero_pro_v1.html'));
-  if (IS_DEMO) mainWindow.setTitle('GANADERO ERP PRO - MODO DEMO');
+  if (IS_DEMO) {
+    mainWindow.setTitle('GANADERO ERP PRO - MODO DEMO');
+    mainWindow.webContents.on('did-finish-load', () => {
+      mainWindow.webContents.send('demo-mode', true);
+    });
+  }
 }
 
 app.whenReady().then(() => {

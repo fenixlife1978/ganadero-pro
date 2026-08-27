@@ -5,5 +5,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveData: (data) => ipcRenderer.invoke('db:save', data),
   resetDatabase: () => ipcRenderer.invoke('db:reset'),
   openFile: () => ipcRenderer.invoke('dialog:openFile'),
-  isElectron: true
+  isElectron: true,
+  onDemoMode: (callback) => ipcRenderer.on('demo-mode', (_e, isDemo) => callback(isDemo))
 });

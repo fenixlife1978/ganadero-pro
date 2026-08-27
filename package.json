@@ -6,7 +6,7 @@
   "scripts": {
     "start": "electron .",
     "build": "electron-builder --win",
-    "build:demo": "cross-env DEMO_MODE=true electron-builder --win",
+    "build:demo": "cross-env DEMO_MODE=true electron-builder --win --config.productName=\"GANADERO ERP PRO DEMO\" --config.win.target.nsis.artifactName=\"GANADERO-ERP-PRO-DEMO-Setup-${version}.exe\" --config.win.target.portable.artifactName=\"GANADERO-ERP-PRO-DEMO-${version}-portable.exe\"",
     "postinstall": "electron-builder install-app-deps"
   },
   "build": {
@@ -16,10 +16,12 @@
       "output": "dist"
     },
     "files": [
-      "app/**/*",
+      "ganadero_pro_v1.html",
       "main.js",
       "preload.js",
       "database.js",
+      "icon.ico",
+      "logo.png",
       "node_modules/**/*"
     ],
     "extraResources": [
@@ -35,7 +37,8 @@
           "arch": ["x64"]
         }
       ],
-      "icon": "icon.ico"
+      "icon": "icon.ico",
+      "artifactName": "GANADERO-ERP-PRO-Setup-${version}.exe"
     },
     "nsis": {
       "oneClick": false,
@@ -46,6 +49,9 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "GANADERO ERP PRO"
+    },
+    "portable": {
+      "artifactName": "GANADERO-ERP-PRO-${version}-portable.exe"
     }
   },
   "dependencies": {
