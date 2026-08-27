@@ -907,7 +907,7 @@ function navigate(page){
     documentos:['📁 Documentos','Archivos y certificados'],
   };
   const t = titles[page]||['',''];
-  document.getElementById('header-title').textContent = t[0];
+  document.getElementById('header-title').innerHTML = t[0];
   document.getElementById('header-subtitle').textContent = t[1];
   window.scrollTo(0,0);
   // Refresh data
