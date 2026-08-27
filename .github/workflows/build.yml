@@ -22,7 +22,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --force --no-audit
 
       - name: Build Installer (.exe)
         run: npm run build
@@ -49,7 +49,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --force --no-audit
 
       - name: Build Demo (.exe)
         run: npm run build:demo
