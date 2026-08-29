@@ -21,14 +21,7 @@
       "preload.js",
       "database.js",
       "icon.ico",
-      "logo.png",
       "node_modules/**/*"
-    ],
-    "extraResources": [
-      {
-        "from": "data/",
-        "to": "data/"
-      }
     ],
     "win": {
       "target": [
