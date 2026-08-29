@@ -126,6 +126,19 @@ tr:hover td{background:#f8fafb}
 .form-group textarea{resize:vertical;min-height:70px}
 .form-full{grid-column:1/-1}
 
+/* ANIMAL SEARCH (búsqueda inteligente) */
+.animal-search{position:relative}
+.animal-search .animal-search-list{display:none;position:absolute;top:100%;left:0;right:0;z-index:2000;background:#101719;border:1px solid #3b4649;border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.animal-search .animal-search-item{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;font-size:12.5px;color:#e7eaea;border-bottom:1px solid #2a3335}
+.animal-search .animal-search-item:hover{background:#1a2428}
+.animal-search .animal-search-item strong{color:#79d52d;min-width:48px}
+.animal-search .animal-search-item span{flex:1;color:#e7eaea}
+.animal-search .animal-search-item small{color:#9aa2a4;font-size:11px}
+.animal-search .animal-search-item.empty{color:#9aa2a4;justify-content:center;cursor:default}
+.animal-search .animal-search-item.empty:hover{background:#101719}
+.animal-search .animal-search-item.clear{color:#9aa2a4;font-size:11px;justify-content:center}
+.animal-search .animal-search-item.clear:hover{background:#1a2428;color:#e74c3c}
+
 .tag-item{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:var(--bg);border:1px solid var(--border);border-radius:6px;margin-bottom:4px;font-size:12px}
 .tag-item span:first-child{color:var(--text)}
 .tag-remove{cursor:pointer;color:var(--text-light);font-size:11px;padding:2px 6px;border-radius:3px;transition:all .2s}
@@ -981,6 +994,59 @@ function audit(modulo,accion,registro,cambios){
 }
 
 // ==================== MODAL SYSTEM ====================
+function renderAnimalSearch(key,val,opts={}){
+  const a=val?DB.animales.find(x=>x.id===val):null;
+  const searchText=a?`${a.id} - ${a.arete} - ${a.nombre}`:'';
+  return `<div class="animal-search">
+    <input type="text" id="f-${key}-search" data-key="${key}" data-optional="${opts.optional?'1':'0'}" data-vaca="${opts.vacaOnly?'1':'0'}" autocomplete="off" value="${searchText}" placeholder="${opts.optional?'Buscar animal (opcional) por código, arete o nombre...':'Buscar animal por código, arete o nombre...'}" oninput="animalSearchFilter(this)" onfocus="animalSearchFilter(this)" onblur="setTimeout(function(){animalSearchClose('${key}')},180)">
+    <input type="hidden" id="f-${key}" value="${val||''}">
+    <div class="animal-search-list" id="f-${key}-list"></div>
+  </div>`;
+}
+function animalSearchFilter(input){
+  const key=input.dataset.key;
+  const optional=input.dataset.optional==='1';
+  const vacaOnly=input.dataset.vaca==='1';
+  const q=(input.value||'').trim().toLowerCase();
+  const list=document.getElementById('f-'+key+'-list');
+  if(!list)return;
+  let animals=DB.animales;
+  if(vacaOnly) animals=animals.filter(x=>x.tipo==='Vaca');
+  let filtered=animals;
+  if(q){
+    filtered=animals.filter(x=>
+      (x.id||'').toLowerCase().includes(q)||
+      (x.arete||'').toLowerCase().includes(q)||
+      (x.codigo||'').toLowerCase().includes(q)||
+      (x.nombre||'').toLowerCase().includes(q));
+  }
+  let items=filtered.slice(0,40).map(x=>
+    `<div class="animal-search-item" onmousedown="event.preventDefault();animalSearchSelect('${key}','${x.id}')">
+       <strong>${x.id}</strong> <span>${x.arete} - ${x.nombre}</span> <small>${x.tipo}</small>
+     </div>`).join('');
+  if(!items) items='<div class="animal-search-item empty">Sin resultados</div>';
+  items+='<div class="animal-search-item clear" onmousedown="event.preventDefault();animalSearchClear(\''+key+'\')">✕ Limpiar selección</div>';
+  list.innerHTML=items;
+  list.style.display='block';
+}
+function animalSearchSelect(key,id){
+  const a=DB.animales.find(x=>x.id===id);
+  document.getElementById('f-'+key).value=id;
+  const search=document.getElementById('f-'+key+'-search');
+  if(a) search.value=a.id+' - '+a.arete+' - '+a.nombre;
+  animalSearchClose(key);
+}
+function animalSearchClear(key){
+  document.getElementById('f-'+key).value='';
+  const search=document.getElementById('f-'+key+'-search');
+  if(search) search.value='';
+  animalSearchClose(key);
+}
+function animalSearchClose(key){
+  const list=document.getElementById('f-'+key+'-list');
+  if(list) list.style.display='none';
+}
+
 let currentModal = null;
 function openModal(type,editId=null){
   currentModal = {type,editId};
@@ -1210,12 +1276,8 @@ function openModal(type,editId=null){
     if(inputType.startsWith('select:')){
       const opts = inputType.substring(7).split(',');
       html += `<select id="f-${key}"><option value="">-- Seleccionar --</option>${opts.map(o=>`<option value="${o}" ${val===o?'selected':''}>${o}</option>`).join('')}</select>`;
-    } else if(inputType==='animalselect'){
-      html += `<select id="f-${key}"><option value="">-- Seleccionar --</option>${DB.animales.map(a=>`<option value="${a.id}" ${val===a.id?'selected':''}>${a.id} - ${a.nombre}</option>`).join('')}</select>`;
-    } else if(inputType==='animalselect_opt'){
-      html += `<select id="f-${key}"><option value="">-- Ninguno / No aplica --</option>${DB.animales.map(a=>`<option value="${a.id}" ${val===a.id?'selected':''}>${a.id} - ${a.nombre}</option>`).join('')}</select>`;
-    } else if(inputType==='animalselect_vaca'){
-      html += `<select id="f-${key}"><option value="">-- Seleccionar --</option>${DB.animales.filter(a=>a.tipo==='Vaca').map(a=>`<option value="${a.id}" ${val===a.id?'selected':''}>${a.id} - ${a.nombre}</option>`).join('')}</select>`;
+    } else if(inputType==='animalselect'||inputType==='animalselect_opt'||inputType==='animalselect_vaca'){
+      html += renderAnimalSearch(key,val,{optional:inputType==='animalselect_opt',vacaOnly:inputType==='animalselect_vaca'});
     } else if(inputType.startsWith('tagselect:')){
       const tagKey = inputType.substring(10);
       const opts = (DB.tags[tagKey]||[]);
