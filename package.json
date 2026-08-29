@@ -6,7 +6,7 @@
   "scripts": {
     "start": "electron .",
     "build": "electron-builder --win",
-    "build:demo": "cross-env DEMO_MODE=true electron-builder --win --config.productName=\"ganadero Pro v1.0 DEMO\" --config.win.target.nsis.artifactName=\"ganadero-Pro-v1.0-DEMO-Setup-${version}.exe\" --config.win.target.portable.artifactName=\"ganadero-Pro-v1.0-DEMO-${version}-portable.exe\"",
+    "build:demo": "cross-env DEMO_MODE=true electron-builder --win --config build-demo.yml",
     "postinstall": "electron-builder install-app-deps"
   },
   "build": {

@@ -1,0 +1,32 @@
+appId: com.ganadero.erp.pro
+productName: ganadero Pro v1.0 DEMO
+directories:
+  output: dist
+files:
+  - ganadero_pro_v1.html
+  - main.js
+  - preload.js
+  - database.js
+  - icon.ico
+  - node_modules/**/*
+win:
+  icon: icon.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  installerIcon: icon.ico
+  uninstallerIcon: icon.ico
+  installerHeaderIcon: icon.ico
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: GANADERO ERP PRO DEMO
+  artifactName: ganadero-Pro-v1.0-DEMO-Setup-${version}.exe
+portable:
+  artifactName: ganadero-Pro-v1.0-DEMO-${version}-portable.exe
