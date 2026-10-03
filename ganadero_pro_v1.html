@@ -721,6 +721,16 @@ const DB = {
   }
 };
 
+async function webDBRequest(payload){
+  const response = await fetch('/api/db',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  });
+  const result = await response.json().catch(()=>({ok:false,error:'Respuesta inválida del servidor.'}));
+  if(!response.ok || !result.ok) throw new Error(result.error || 'Error de persistencia.');
+  return result;
+}
 function loadDB(){
   if(window.electronAPI && window.electronAPI.isElectron){
     window.electronAPI.loadData().then(data=>{
@@ -728,21 +738,24 @@ function loadDB(){
       else { seedData(); }
       renderDashboard();
       Object.keys(DB.tags||{}).forEach(k=>renderTagsFromKey(k));
-    });
+    }).catch(err=>showToast('Error al cargar datos: '+err.message,'error'));
   } else {
-    const saved = localStorage.getItem('ganadero_erp_pro');
-    if(saved){
-      try{ Object.assign(DB, JSON.parse(saved)); }catch(e){ seedData(); }
-    } else { seedData(); }
-    renderDashboard();
-    Object.keys(DB.tags||{}).forEach(k=>renderTagsFromKey(k));
+    webDBRequest({action:'load'}).then(result=>{
+      if(result.data){ Object.assign(DB, result.data); }
+      else { seedData(); }
+      renderDashboard();
+      Object.keys(DB.tags||{}).forEach(k=>renderTagsFromKey(k));
+    }).catch(err=>{
+      showToast('No se pudo conectar con Turso: '+err.message,'error');
+      renderDashboard();
+    });
   }
 }
 function saveDB(){
   if(window.electronAPI && window.electronAPI.isElectron){
     window.electronAPI.saveData(DB);
   } else {
-    localStorage.setItem('ganadero_erp_pro', JSON.stringify(DB));
+    webDBRequest({action:'save',data:DB}).catch(err=>showToast('Error guardando en Turso: '+err.message,'error'));
   }
 }
 
@@ -2060,22 +2073,29 @@ function quickAddTag(tagKey, selectId){
 
 // ==================== RESET SISTEMA ====================
 function resetSistema(){
-  const pass1 = prompt('⚠ CONFIRMACIÓN DE RESET\n\nEscriba "CONFIRMAR RESET" para proceder (acción irreversible):');
+  const pass1 = prompt('⚠ CONFIRMACIÓN DE RESET\\n\\nEscriba "CONFIRMAR RESET" para proceder (acción irreversible):');
   if(pass1 !== 'CONFIRMAR RESET'){showToast('Reset cancelado','warning');return;}
   const pass2 = prompt('Ingrese la contraseña de administrador:');
-  if(pass2 !== 'admin123'){showToast('Contraseña incorrecta','error');return;}
+  if(!pass2){showToast('Reset cancelado','warning');return;}
+
   if(window.electronAPI && window.electronAPI.isElectron){
-    window.electronAPI.resetDatabase().then(()=>{ seedData(); showToast('Sistema reiniciado (SQLite borrado). Contraseña admin: admin123','warning'); navigate('dashboard'); });
+    window.electronAPI.verifyAdminPassword(pass2).then(ok=>{
+      if(!ok){showToast('Contraseña incorrecta','error');return;}
+      return window.electronAPI.resetDatabase();
+    }).then(result=>{
+      if(result===undefined)return;
+      seedData();
+      showToast('Sistema reiniciado correctamente.','warning');
+      navigate('dashboard');
+    }).catch(err=>showToast('No se pudo reiniciar: '+err.message,'error'));
   } else {
-    localStorage.removeItem('ganadero_erp_pro');
-    DB.animales=[];DB.hatos=[];DB.reproduccion=[];DB.pesajes=[];DB.produccion=[];
-    DB.sanidad=[];DB.potreros=[];DB.alimentacion=[];DB.maquinaria=[];DB.medicamentos=[];
-    DB.inventario=[];DB.compras=[];DB.ventas=[];DB.clientes=[];DB.proveedores=[];
-    DB.finanzas=[];DB.movimientos=[];DB.auditoria=[];DB.documentos=[];DB.backups=[];
-    DB.tags={razas:['Jersey','Holstein','Brahman','Gyr','Pardo Suizo','Angus','Hereford','Simmental'],categoriasMed:['Antiparasitario','Vacuna','Antibiótico','Antiinflamatorio','Vitamina','Mineral'],categoriasInv:['Alimentos','Medicamentos','Insumos','Herramientas','Equipos'],categoriasFin:['Venta de animales','Venta de leche','Alimentación','Sanidad','Reproducción','Mantenimiento','Nómina','Servicios','Otros']};
-    seedData();
-    showToast('Sistema reiniciado completamente. Contraseña admin: admin123','warning');
-    navigate('dashboard');
+    webDBRequest({action:'reset',password:pass2}).then(()=>{
+      seedData();
+      return webDBRequest({action:'save',data:DB});
+    }).then(()=>{
+      showToast('Sistema reiniciado correctamente.','warning');
+      navigate('dashboard');
+    }).catch(err=>showToast(err.message,'error'));
   }
 }
 
