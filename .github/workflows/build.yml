@@ -2,7 +2,7 @@ name: Build GANADERO ERP PRO
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, turso-migration ]
     tags: [ 'v*' ]
   pull_request:
     branches: [ main, master ]
