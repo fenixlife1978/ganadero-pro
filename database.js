@@ -1,74 +1,14 @@
-const path = require('path');
-const fs = require('fs');
-
-class GanaderoDB {
-  constructor(dbInstance) {
-    this.db = dbInstance;
-  }
-
-  loadAll() {
-    const tables = ['animales','hatos','reproduccion','pesajes','produccion','sanidad','potreros','alimentacion','maquinaria','medicamentos','inventario','compras','ventas','clientes','proveedores','finanzas','movimientos','documentos'];
-    const data = {};
-    tables.forEach(t => {
-      const rows = this.db.prepare(`SELECT data FROM ${t}`).all();
-      data[t] = rows.map(r => JSON.parse(r.data));
-    });
-    const audRows = this.db.prepare('SELECT data FROM auditoria ORDER BY id DESC').all();
-    data.auditoria = audRows.map(r => JSON.parse(r.data));
-    const bakRows = this.db.prepare('SELECT data FROM backups ORDER BY id DESC').all();
-    data.backups = bakRows.map(r => JSON.parse(r.data));
-    const tagsRows = this.db.prepare('SELECT tag_key, value FROM tags').all();
-    data.tags = {};
-    tagsRows.forEach(r => {
-      if (!data.tags[r.tag_key]) data.tags[r.tag_key] = [];
-      data.tags[r.tag_key].push(r.value);
-    });
-    const cfgRows = this.db.prepare('SELECT key, value FROM config').all();
-    data.config = {};
-    cfgRows.forEach(r => { try { data.config[r.key] = JSON.parse(r.value); } catch(e) { data.config[r.key] = r.value; } });
-    return data;
-  }
-
-  saveAll(data) {
-    const tables = ['animales','hatos','reproduccion','pesajes','produccion','sanidad','potreros','alimentacion','maquinaria','medicamentos','inventario','compras','ventas','clientes','proveedores','finanzas','movimientos','documentos'];
-    const transaction = this.db.transaction(() => {
-      tables.forEach(t => {
-        if (!data[t]) return;
-        this.db.prepare(`DELETE FROM ${t}`).run();
-        const ins = this.db.prepare(`INSERT INTO ${t} (id, data) VALUES (?, ?)`);
-        data[t].forEach(item => {
-          const id = item.id || item.codigo || String(Date.now());
-          ins.run(id, JSON.stringify(item));
-        });
-      });
-      this.db.prepare('DELETE FROM auditoria').run();
-      const insAud = this.db.prepare('INSERT INTO auditoria (data) VALUES (?)');
-      (data.auditoria || []).forEach(a => insAud.run(JSON.stringify(a)));
-      this.db.prepare('DELETE FROM backups').run();
-      const insBak = this.db.prepare('INSERT INTO backups (data) VALUES (?)');
-      (data.backups || []).forEach(b => insBak.run(JSON.stringify(b)));
-      this.db.prepare('DELETE FROM tags').run();
-      const insTag = this.db.prepare('INSERT INTO tags (tag_key, value) VALUES (?, ?)');
-      if (data.tags) {
-        Object.keys(data.tags).forEach(k => {
-          data.tags[k].forEach(v => insTag.run(k, v));
-        });
-      }
-      if (data.config) {
-        const insCfg = this.db.prepare('INSERT OR REPLACE INTO config (key, value) VALUES (?, ?)');
-        Object.keys(data.config).forEach(k => insCfg.run(k, JSON.stringify(data.config[k])));
-      }
-    });
-    transaction();
-  }
-
-  resetAll() {
-    const tables = ['animales','hatos','reproduccion','pesajes','produccion','sanidad','potreros','alimentacion','maquinaria','medicamentos','inventario','compras','ventas','clientes','proveedores','finanzas','movimientos','documentos','auditoria','backups','tags','config'];
-    const transaction = this.db.transaction(() => {
-      tables.forEach(t => this.db.prepare(`DELETE FROM ${t}`).run());
-    });
-    transaction();
-  }
+const {createClient}=require('@libsql/client');
+const TABLES=['animales','hatos','reproduccion','pesajes','produccion','sanidad','potreros','alimentacion','maquinaria','medicamentos','inventario','compras','ventas','clientes','proveedores','finanzas','movimientos','documentos'];
+const META=['auditoria','backups'];
+const SCHEMA=['CREATE TABLE IF NOT EXISTS config (key TEXT PRIMARY KEY, value TEXT)','CREATE TABLE IF NOT EXISTS tags (id INTEGER PRIMARY KEY AUTOINCREMENT, tag_key TEXT NOT NULL, value TEXT NOT NULL)',...TABLES.map(t=>'CREATE TABLE IF NOT EXISTS '+t+' (id TEXT PRIMARY KEY, data TEXT NOT NULL)'),'CREATE TABLE IF NOT EXISTS auditoria (id INTEGER PRIMARY KEY AUTOINCREMENT, data TEXT NOT NULL)','CREATE TABLE IF NOT EXISTS documentos (id TEXT PRIMARY KEY, data TEXT NOT NULL)','CREATE TABLE IF NOT EXISTS backups (id INTEGER PRIMARY KEY AUTOINCREMENT, data TEXT NOT NULL)'];
+class GanaderoDB{
+ constructor(){const url=process.env.TURSO_DATABASE_URL,authToken=process.env.TURSO_AUTH_TOKEN;if(!url||!authToken)throw new Error('Faltan TURSO_DATABASE_URL y/o TURSO_AUTH_TOKEN.');this.client=createClient({url,authToken});}
+ async init(){await this.client.batch(SCHEMA,'write');await this.client.execute('CREATE INDEX IF NOT EXISTS idx_tags_key ON tags(tag_key)');}
+ async loadAll(){const results=await this.client.batch([...TABLES.map(t=>({sql:'SELECT id,data FROM '+t})),{sql:'SELECT id,data FROM auditoria ORDER BY id DESC'},{sql:'SELECT id,data FROM backups ORDER BY id DESC'},{sql:'SELECT tag_key,value FROM tags'},{sql:'SELECT key,value FROM config'}]);const data={};TABLES.forEach((t,i)=>data[t]=results[i].rows.map(r=>JSON.parse(r.data)));data.auditoria=results[TABLES.length].rows.map(r=>JSON.parse(r.data));data.backups=results[TABLES.length+1].rows.map(r=>JSON.parse(r.data));data.tags={};results[TABLES.length+2].rows.forEach(r=>(data.tags[r.tag_key]??=[]).push(r.value));data.config={};results[TABLES.length+3].rows.forEach(r=>{try{data.config[r.key]=JSON.parse(r.value)}catch{data.config[r.key]=r.value}});return data;}
+ async saveAll(data){for(const table of TABLES){const incoming=Array.isArray(data[table])?data[table]:[],existing=await this.client.execute('SELECT id FROM '+table),ids=new Set(incoming.map(x=>String(x.id||x.codigo)).filter(Boolean)),statements=[];for(const row of existing.rows)if(!ids.has(String(row.id)))statements.push({sql:'DELETE FROM '+table+' WHERE id=?',args:[row.id]});for(const item of incoming){const id=String(item.id||item.codigo||Date.now()+'-'+Math.random().toString(36).slice(2));statements.push({sql:'INSERT OR REPLACE INTO '+table+'(id,data) VALUES(?,?)',args:[id,JSON.stringify({...item,id})]});}if(statements.length)await this.client.batch(statements,'write');}
+ await this.client.batch(['DELETE FROM auditoria','DELETE FROM backups','DELETE FROM tags'],'write');const statements=[];for(const a of data.auditoria||[])statements.push({sql:'INSERT INTO auditoria(data) VALUES(?)',args:[JSON.stringify(a)]});for(const b of data.backups||[])statements.push({sql:'INSERT INTO backups(data) VALUES(?)',args:[JSON.stringify(b)]});for(const [k,vals] of Object.entries(data.tags||{}))for(const v of vals||[])statements.push({sql:'INSERT INTO tags(tag_key,value) VALUES(?,?)',args:[k,v]});for(const [k,v] of Object.entries(data.config||{}))statements.push({sql:'INSERT OR REPLACE INTO config(key,value) VALUES(?,?)',args:[k,JSON.stringify(v)]});if(statements.length)await this.client.batch(statements,'write');}
+ async resetAll(){await this.client.batch([...TABLES,...META,'tags','config'].map(t=>'DELETE FROM '+t),'write');}
+ async close(){this.client.close();}
 }
-
-module.exports = GanaderoDB;
+module.exports=GanaderoDB;
