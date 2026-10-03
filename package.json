@@ -1,6 +1,6 @@
 {
   "name":"ganadero-erp-pro","version":"3.1.0","description":"Sistema Integral de Gestión Ganadera - ERP de Escritorio con Turso","main":"main.js",
-  "scripts":{"start":"electron .","build":"electron-builder --win","build:demo":"cross-env DEMO_MODE=true electron-builder --win --config build-demo.yml","postinstall":"electron-builder install-app-deps","migrate:turso":"node scripts/migrate-sqlite-to-turso.js"},
+  "scripts":{"start":"electron .","build":"electron-builder --win","build:demo":"cross-env DEMO_MODE=true electron-builder --win --config build-demo.yml","migrate:turso":"node scripts/migrate-sqlite-to-turso.js"},
   "build":{"appId":"com.ganadero.erp.pro","productName":"ganadero Pro","directories":{"output":"dist"},"files":["ganadero_pro_v1.html","main.js","preload.js","database.js","icon.ico","node_modules/**/*"],"win":{"target":[{"target":"nsis","arch":["x64"]}],"icon":"icon.ico","artifactName":"ganadero-Pro-Setup-${version}.exe"},"nsis":{"oneClick":false,"allowToChangeInstallationDirectory":true,"installerIcon":"icon.ico","uninstallerIcon":"icon.ico","installerHeaderIcon":"icon.ico","createDesktopShortcut":true,"createStartMenuShortcut":true,"shortcutName":"GANADERO ERP PRO"},"portable":{"artifactName":"ganadero-Pro-${version}-portable.exe"}},
   "dependencies":{"@libsql/client":"^0.18.0"},"devDependencies":{"sql.js": "^1.13.0","electron":"^31.0.0","electron-builder":"^25.0.0","cross-env":"^7.0.3"}
 }
