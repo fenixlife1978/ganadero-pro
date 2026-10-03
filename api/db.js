@@ -1,37 +1,46 @@
 const GanaderoDB = require('../database');
 
-module.exports = async function(req, res) {
-  const action = String(req.query.action || '');
+function send(res, status, body) {
+  res.status(status).json(body);
+}
+
+module.exports = async function handler(req, res) {
+  if (req.method !== 'POST') return send(res, 405, { ok: false, error: 'Método no permitido.' });
+
   let db;
   try {
+    const { action, data, password } = req.body || {};
     db = new GanaderoDB();
     await db.init();
 
     if (action === 'load') {
-      const data = await db.loadAll();
-      return res.status(200).json({ data });
+      const result = await db.loadAll();
+      await db.close();
+      return send(res, 200, { ok: true, data: result });
     }
 
     if (action === 'save') {
-      const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
-      await db.saveAll(body.data || {});
-      return res.status(200).json({ ok: true });
+      await db.saveAll(data || {});
+      await db.close();
+      return send(res, 200, { ok: true });
     }
 
     if (action === 'reset') {
-      const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
-      const expected = process.env.GANADERO_ADMIN_PASSWORD;
-      if (!expected || String(body.password || '') !== expected) {
-        return res.status(401).json({ error: 'Contraseña incorrecta.' });
+      const configured = process.env.GANADERO_ADMIN_PASSWORD;
+      if (!configured || String(password || '') !== configured) {
+        await db.close();
+        return send(res, 401, { ok: false, error: 'Contraseña de administrador incorrecta.' });
       }
       await db.resetAll();
-      return res.status(200).json({ ok: true });
+      await db.close();
+      return send(res, 200, { ok: true });
     }
 
-    return res.status(400).json({ error: 'Acción no válida.' });
+    await db.close();
+    return send(res, 400, { ok: false, error: 'Acción no válida.' });
   } catch (error) {
-    return res.status(500).json({ error: 'Error de conexión con la base de datos.' });
-  } finally {
+    console.error('Ganadero API:', error);
     try { if (db) await db.close(); } catch {}
+    return send(res, 500, { ok: false, error: error.message || 'Error interno.' });
   }
 };
