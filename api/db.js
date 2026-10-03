@@ -18,6 +18,16 @@ module.exports = async function(req, res) {
       return res.status(200).json({ ok: true });
     }
 
+    if (action === 'reset') {
+      const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
+      const expected = process.env.GANADERO_ADMIN_PASSWORD;
+      if (!expected || String(body.password || '') !== expected) {
+        return res.status(401).json({ error: 'Contraseña incorrecta.' });
+      }
+      await db.resetAll();
+      return res.status(200).json({ ok: true });
+    }
+
     return res.status(400).json({ error: 'Acción no válida.' });
   } catch (error) {
     return res.status(500).json({ error: 'Error de conexión con la base de datos.' });
