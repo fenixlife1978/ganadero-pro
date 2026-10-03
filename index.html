@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GANADERO ERP PRO</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f5f7fa}iframe{display:block;width:100%;height:100%;border:0}</style>
+</head>
+<body>
+<iframe id="app" src="/ganadero_pro_v1.html" title="GANADERO ERP PRO"></iframe>
+<script>
+(function(){
+  const frame=document.getElementById('app');
+  let cache=null;
+  let ready=false;
+  async function api(action,options){
+    const response=await fetch('/api/db?action='+encodeURIComponent(action),Object.assign({cache:'no-store'},options||{}));
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok) throw new Error(data.error||'Error de base de datos');
+    return data;
+  }
+  function emptyState(){
+    return JSON.stringify({
+      animales:[],hatos:[],reproduccion:[],pesajes:[],produccion:[],sanidad:[],potreros:[],
+      alimentacion:[],maquinaria:[],medicamentos:[],inventario:[],compras:[],ventas:[],clientes:[],
+      proveedores:[],finanzas:[],movimientos:[],auditoria:[],documentos:[],backups:[],
+      config:{},tags:{}
+    });
+  }
+  frame.addEventListener('load',async function(){
+    const w=frame.contentWindow;
+    try{
+      const loaded=await api('load');
+      cache=JSON.stringify(loaded.data||{});
+    }catch(e){
+      console.error(e);
+      cache=emptyState();
+    }
+    const Storage=w.Storage;
+    if(Storage){
+      const originalGet=Storage.prototype.getItem;
+      const originalSet=Storage.prototype.setItem;
+      const originalRemove=Storage.prototype.removeItem;
+      Storage.prototype.getItem=function(key){
+        if(key==='ganadero_erp_pro') return cache;
+        return originalGet.call(this,key);
+      };
+      Storage.prototype.setItem=function(key,value){
+        if(key==='ganadero_erp_pro'){
+          cache=value;
+          try{
+            const data=JSON.parse(value);
+            api('save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data})}).catch(console.error);
+          }catch(e){console.error(e);}
+          return;
+        }
+        return originalSet.call(this,key,value);
+      };
+      Storage.prototype.removeItem=function(key){
+        if(key==='ganadero_erp_pro'){cache=emptyState();return;}
+        return originalRemove.call(this,key);
+      };
+    }
+
+    w.resetSistema=async function(){
+      const confirmacion=w.prompt('⚠ CONFIRMACIÓN DE RESET\n\nEscriba "CONFIRMAR RESET" para proceder (acción irreversible):');
+      if(confirmacion!=='CONFIRMAR RESET') return;
+      const password=w.prompt('Ingrese la contraseña de administrador:');
+      if(!password) return;
+      try{
+        await api('reset',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password})});
+        cache=emptyState();
+        w.location.reload();
+      }catch(e){
+        w.alert(e.message||'No autorizado');
+      }
+    };
+
+    if(typeof w.loadDB==='function') w.loadDB();
+    ready=true;
+  });
+})();
+</script>
+</body>
+</html>
