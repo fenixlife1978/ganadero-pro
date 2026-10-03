@@ -13,3 +13,12 @@ npm run migrate:turso -- "C:\ruta\a\ganadero.db"
 Después de validar los conteos en Turso, la aplicación ya opera contra Turso y no abre SQLite para las operaciones normales.
 
 La sincronización por ID evita el DELETE global de las tablas principales en cada guardado. Las tablas de auditoría/backups/tags todavía se reconstruyen desde el estado recibido y son el siguiente punto a normalizar.
+
+## Acceso web
+
+La web utiliza un único administrador semilla:
+
+- Usuario: `admin`
+- Contraseña: valor de `GANADERO_ADMIN_PASSWORD`
+- La API emite una sesión HTTP-only firmada después del login.
+- Las operaciones web de carga, guardado y reset requieren una sesión válida.
