@@ -3,13 +3,101 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GANADERO ERP PRO</title>
+<title>Inicio de sesión · GANADERO ERP PRO</title>
 <style>
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#070b0d}
-iframe{display:block;width:100%;height:100%;border:0}
+:root{--bg:#070b0d;--panel:#101719;--line:#293236;--text:#f3f5f4;--muted:#9aa2a4;--green:#75d51f;--green2:#58b914;--red:#e74c3c}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;font-family:"Segoe UI",Arial,sans-serif;background:radial-gradient(circle at 50% 35%,#16221f 0,#070b0d 55%);color:var(--text)}
+body{display:flex;align-items:center;justify-content:center;padding:24px}
+.login-shell{width:min(430px,100%);background:rgba(16,23,25,.96);border:1px solid var(--line);border-radius:18px;padding:34px;box-shadow:0 24px 70px rgba(0,0,0,.45)}
+.brand{display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:28px}
+.brand img{width:150px;height:100px;object-fit:contain;filter:drop-shadow(0 8px 18px rgba(0,0,0,.35))}
+.brand h1{margin:10px 0 5px;font-size:22px;letter-spacing:.5px}
+.brand p{margin:0;color:var(--muted);font-size:13px}
+label{display:block;font-size:12px;font-weight:700;margin:0 0 7px;color:#dce1df}
+input{width:100%;height:46px;padding:0 13px;border:1px solid #394346;border-radius:9px;background:#0a1012;color:#fff;font-size:14px;outline:none}
+input:focus{border-color:var(--green)}
+.field{margin-bottom:15px}
+button{width:100%;height:46px;border:0;border-radius:9px;background:linear-gradient(90deg,var(--green),var(--green2));color:#fff;font-weight:800;font-size:14px;cursor:pointer}
+button:disabled{opacity:.6;cursor:wait}
+.message{min-height:20px;margin-top:13px;text-align:center;color:var(--red);font-size:12px}
+.seed{margin-top:18px;padding-top:15px;border-top:1px solid var(--line);text-align:center;color:#707a7d;font-size:11px}
+#app{position:fixed;inset:0;width:100%;height:100%;border:0;display:none}
 </style>
 </head>
 <body>
+<div class="login-shell" id="login">
+  <div class="brand">
+    <img src="/icon.ico" alt="GANADERO ERP PRO">
+    <h1>GANADERO ERP PRO</h1>
+    <p>Gestión integral ganadera</p>
+  </div>
+  <form id="loginForm" autocomplete="on">
+    <div class="field">
+      <label for="username">Usuario</label>
+      <input id="username" name="username" value="admin" autocomplete="username" required>
+    </div>
+    <div class="field">
+      <label for="password">Contraseña</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required autofocus>
+    </div>
+    <button id="submit" type="submit">Iniciar sesión</button>
+    <div class="message" id="message" role="alert"></div>
+  </form>
+  <div class="seed">Administrador semilla · acceso único</div>
+</div>
+
 <iframe id="app" src="/ganadero_pro_v1.html" title="GANADERO ERP PRO"></iframe>
+
+<script>
+const login=document.getElementById('login');
+const app=document.getElementById('app');
+const form=document.getElementById('loginForm');
+const submit=document.getElementById('submit');
+const message=document.getElementById('message');
+
+async function request(payload){
+  const response=await fetch('/api/db',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    credentials:'same-origin',
+    body:JSON.stringify(payload)
+  });
+  const result=await response.json().catch(()=>({ok:false,error:'Respuesta inválida del servidor.'}));
+  if(!response.ok||!result.ok) throw new Error(result.error||'Error de autenticación.');
+  return result;
+}
+
+function showApp(){
+  login.style.display='none';
+  app.style.display='block';
+}
+
+form.addEventListener('submit',async(event)=>{
+  event.preventDefault();
+  message.textContent='';
+  submit.disabled=true;
+  try{
+    await request({
+      action:'login',
+      username:document.getElementById('username').value,
+      password:document.getElementById('password').value
+    });
+    showApp();
+  }catch(error){
+    message.textContent=error.message;
+    document.getElementById('password').select();
+  }finally{
+    submit.disabled=false;
+  }
+});
+
+(async()=>{
+  try{
+    const session=await request({action:'session'});
+    if(session.authenticated) showApp();
+  }catch(error){}
+})();
+</script>
 </body>
 </html>
