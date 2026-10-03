@@ -728,7 +728,13 @@ async function webDBRequest(payload){
     body:JSON.stringify(payload)
   });
   const result = await response.json().catch(()=>({ok:false,error:'Respuesta inválida del servidor.'}));
-  if(!response.ok || !result.ok) throw new Error(result.error || 'Error de persistencia.');
+  if(!response.ok || !result.ok){
+    if(response.status === 401 && window.top === window.self){
+      window.location.replace('/index.html');
+      return result;
+    }
+    throw new Error(result.error || 'Error de persistencia.');
+  }
   return result;
 }
 function loadDB(){
